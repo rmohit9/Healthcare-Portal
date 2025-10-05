@@ -1,0 +1,72 @@
+{% extends 'authentication/base.html' %}
+
+{% block title %}Home - Healthcare Portal{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 text-center">
+        <div class="hero-section">
+            <i class="fas fa-hospital-alt text-primary mb-4" style="font-size: 4rem;"></i>
+            <h1 class="display-4 mb-4">Welcome to Healthcare Portal</h1>
+            <p class="lead text-muted mb-5">
+                Secure Authentication System for Patients and Healthcare Providers
+            </p>
+
+            {% if not user.is_authenticated %}
+                <div class="d-grid gap-3 d-md-block">
+                    <a href="{% url 'signup' %}" class="btn btn-primary btn-lg px-5 me-md-3">
+                        <i class="fas fa-user-plus me-2"></i>Sign Up
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg px-5">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </div>
+            {% else %}
+                <div class="alert alert-success" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Welcome back, <strong>{{ user.get_full_name }}!</strong>
+                </div>
+                <div class="d-grid gap-3 d-md-block">
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg px-5 me-md-3">
+                        <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                    </a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-secondary btn-lg px-5">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Features -->
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-injured text-success mb-3" style="font-size: 2.5rem;"></i>
+                        <h5 class="card-title">For Patients</h5>
+                        <p class="card-text">Access your personal healthcare dashboard with secure login.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-md text-info mb-3" style="font-size: 2.5rem;"></i>
+                        <h5 class="card-title">For Doctors</h5>
+                        <p class="card-text">Professional dashboard for healthcare providers and staff.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt text-warning mb-3" style="font-size: 2.5rem;"></i>
+                        <h5 class="card-title">Secure & Safe</h5>
+                        <p class="card-text">Your data is protected with industry-standard security measures.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
