@@ -1,5 +1,5 @@
 """
-URL configuration for healthcare_portal project.
+URL configuration for healthcare_portal project with blog integration.
 """
 from django.contrib import admin
 from django.urls import path, include
@@ -9,6 +9,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('authentication.urls')),
+    path('blog/', include('blog.urls')),  # NEW BLOG URLS
 ]
 
 # Serve media files during development

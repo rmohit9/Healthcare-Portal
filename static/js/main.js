@@ -1,4 +1,4 @@
-// Healthcare Portal JavaScript
+// Healthcare Portal JavaScript with Blog Functionality
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the application
@@ -14,6 +14,9 @@ function initializeApp() {
 
     // Initialize profile picture preview
     initializeProfilePicturePreview();
+
+    // Initialize blog features
+    initializeBlogFeatures();
 
     // Initialize tooltips
     initializeTooltips();
@@ -98,6 +101,33 @@ function validateField(field) {
         if (!pincodeRegex.test(value)) {
             isValid = false;
             errorMessage = 'Pincode must be 5 or 6 digits.';
+        }
+    }
+
+    // Blog title validation
+    else if (fieldName === 'title' && value) {
+        if (value.length < 5) {
+            isValid = false;
+            errorMessage = 'Title must be at least 5 characters long.';
+        }
+    }
+
+    // Blog summary validation
+    else if (fieldName === 'summary' && value) {
+        if (value.length < 20) {
+            isValid = false;
+            errorMessage = 'Summary must be at least 20 characters long.';
+        } else if (value.length > 500) {
+            isValid = false;
+            errorMessage = 'Summary must not exceed 500 characters.';
+        }
+    }
+
+    // Blog content validation
+    else if (fieldName === 'content' && value) {
+        if (value.length < 100) {
+            isValid = false;
+            errorMessage = 'Content must be at least 100 characters long.';
         }
     }
 
@@ -187,6 +217,156 @@ function initializeProfilePicturePreview() {
     }
 }
 
+// Blog-specific features
+function initializeBlogFeatures() {
+    // Initialize blog image preview
+    initializeBlogImagePreview();
+
+    // Initialize character counters
+    initializeCharacterCounters();
+
+    // Initialize search functionality
+    initializeSearch();
+
+    // Initialize category filtering
+    initializeCategoryFilter();
+}
+
+// Blog image preview
+function initializeBlogImagePreview() {
+    const imageInput = document.querySelector('input[name="image"]');
+
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+
+            if (file) {
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    showNotification('Please select a valid image file (JPEG, PNG, or GIF).', 'warning');
+                    this.value = '';
+                    return;
+                }
+
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('Image file size must be less than 5MB.', 'warning');
+                    this.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    // Remove existing preview
+                    const existingPreview = document.querySelector('#blog-image-preview');
+                    if (existingPreview) {
+                        existingPreview.remove();
+                    }
+
+                    // Create new preview
+                    const preview = document.createElement('div');
+                    preview.id = 'blog-image-preview';
+                    preview.className = 'mt-2';
+                    preview.innerHTML = `
+                        <small class="text-muted">Preview:</small><br>
+                        <img src="${e.target.result}" alt="Blog image preview" class="img-thumbnail" style="max-width: 300px; max-height: 200px;">
+                    `;
+                    imageInput.parentNode.appendChild(preview);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+}
+
+// Character counters for blog forms
+function initializeCharacterCounters() {
+    // Summary counter
+    const summaryField = document.querySelector('textarea[name="summary"]');
+    if (summaryField) {
+        const counter = document.createElement('small');
+        counter.className = 'text-muted float-end';
+        counter.id = 'summary-counter';
+
+        const helpText = summaryField.parentNode.querySelector('.form-text');
+        if (helpText) {
+            helpText.appendChild(counter);
+        }
+
+        function updateSummaryCounter() {
+            const count = summaryField.value.length;
+            counter.textContent = `${count}/500 characters`;
+
+            if (count > 500) {
+                counter.classList.add('text-danger');
+                summaryField.classList.add('is-invalid');
+            } else {
+                counter.classList.remove('text-danger');
+                summaryField.classList.remove('is-invalid');
+            }
+        }
+
+        summaryField.addEventListener('input', updateSummaryCounter);
+        updateSummaryCounter();
+    }
+
+    // Content counter
+    const contentField = document.querySelector('textarea[name="content"]');
+    if (contentField) {
+        const counter = document.createElement('small');
+        counter.className = 'text-muted float-end';
+        counter.id = 'content-counter';
+
+        const helpText = contentField.parentNode.querySelector('.form-text');
+        if (helpText) {
+            helpText.appendChild(counter);
+        }
+
+        function updateContentCounter() {
+            const count = contentField.value.length;
+            const words = contentField.value.trim().split(/\s+/).length;
+            counter.textContent = `${count} characters, ${words} words`;
+        }
+
+        contentField.addEventListener('input', updateContentCounter);
+        updateContentCounter();
+    }
+}
+
+// Search functionality
+function initializeSearch() {
+    const searchForm = document.querySelector('form[method="get"]');
+    const searchInput = document.querySelector('input[name="search"]');
+
+    if (searchForm && searchInput) {
+        // Add search suggestions (placeholder for future enhancement)
+        searchInput.addEventListener('focus', function() {
+            this.placeholder = 'Search by title, summary, or content...';
+        });
+
+        searchInput.addEventListener('blur', function() {
+            this.placeholder = 'Search blog posts...';
+        });
+    }
+}
+
+// Category filtering
+function initializeCategoryFilter() {
+    const categorySelect = document.querySelector('select[name="category"]');
+
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            if (this.value) {
+                // Auto-submit form when category is selected
+                this.form.submit();
+            }
+        });
+    }
+}
+
 // Initialize Bootstrap tooltips
 function initializeTooltips() {
     if (typeof bootstrap !== 'undefined') {
@@ -202,7 +382,7 @@ function showNotification(message, type = 'info') {
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
     alertDiv.innerHTML = `
-        ${message}
+        <i class="fas fa-info-circle me-2"></i>${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
 
@@ -225,11 +405,12 @@ function setButtonLoading(button, loading = true) {
         button.disabled = true;
         button.classList.add('loading');
         button.dataset.originalText = button.textContent;
-        button.textContent = 'Loading...';
     } else {
         button.disabled = false;
         button.classList.remove('loading');
-        button.textContent = button.dataset.originalText || button.textContent;
+        if (button.dataset.originalText) {
+            button.textContent = button.dataset.originalText;
+        }
     }
 }
 
@@ -245,3 +426,32 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// Reading time calculator for blog posts
+function calculateReadingTime(content) {
+    const wordsPerMinute = 200;
+    const words = content.trim().split(/\s+/).length;
+    return Math.ceil(words / wordsPerMinute);
+}
+
+// Text truncation helper
+function truncateText(text, wordLimit) {
+    const words = text.split(' ');
+    if (words.length > wordLimit) {
+        return words.slice(0, wordLimit).join(' ') + '...';
+    }
+    return text;
+}
+
+// Debounce function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}

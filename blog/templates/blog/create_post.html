@@ -1,0 +1,224 @@
+{% extends 'authentication/base.html' %}
+
+{% block title %}
+{% if is_edit %}Edit Post{% else %}Create Blog Post{% endif %} - Healthcare Portal
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">
+                            <i class="fas fa-{% if is_edit %}edit{% else %}plus{% endif %} me-2"></i>
+                            {% if is_edit %}Edit Blog Post{% else %}Create New Blog Post{% endif %}
+                        </h3>
+                        <small>Share your medical expertise with patients</small>
+                    </div>
+                    <a href="{% url 'blog:doctor_posts' %}" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-arrow-left me-1"></i>Back to My Posts
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" id="blog-form">
+                    {% csrf_token %}
+
+                    <!-- Title -->
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                            <i class="fas fa-heading me-2"></i>{{ form.title.label }}
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.help_text %}
+                            <div class="form-text">{{ form.title.help_text }}</div>
+                        {% endif %}
+                        {% if form.title.errors %}
+                            <div class="text-danger small">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Category -->
+                    <div class="mb-3">
+                        <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">
+                            <i class="fas fa-tags me-2"></i>{{ form.category.label }}
+                        </label>
+                        {{ form.category }}
+                        {% if form.category.help_text %}
+                            <div class="form-text">{{ form.category.help_text }}</div>
+                        {% endif %}
+                        {% if form.category.errors %}
+                            <div class="text-danger small">{{ form.category.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Featured Image -->
+                    <div class="mb-3">
+                        <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">
+                            <i class="fas fa-image me-2"></i>{{ form.image.label }}
+                        </label>
+                        {{ form.image }}
+                        {% if form.image.help_text %}
+                            <div class="form-text">{{ form.image.help_text }}</div>
+                        {% endif %}
+                        {% if form.image.errors %}
+                            <div class="text-danger small">{{ form.image.errors }}</div>
+                        {% endif %}
+
+                        <!-- Image preview -->
+                        {% if is_edit and post.image %}
+                            <div class="mt-2">
+                                <small class="text-muted">Current image:</small><br>
+                                <img src="{{ post.image.url }}" alt="Current image" class="img-thumbnail" style="max-width: 200px;">
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="mb-3">
+                        <label for="{{ form.summary.id_for_label }}" class="form-label fw-bold">
+                            <i class="fas fa-align-left me-2"></i>{{ form.summary.label }}
+                        </label>
+                        {{ form.summary }}
+                        <div class="form-text">
+                            {{ form.summary.help_text }}
+                            <span id="summary-count" class="float-end text-muted"></span>
+                        </div>
+                        {% if form.summary.errors %}
+                            <div class="text-danger small">{{ form.summary.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Content -->
+                    <div class="mb-3">
+                        <label for="{{ form.content.id_for_label }}" class="form-label fw-bold">
+                            <i class="fas fa-file-alt me-2"></i>{{ form.content.label }}
+                        </label>
+                        {{ form.content }}
+                        <div class="form-text">
+                            {{ form.content.help_text }}
+                            <span id="content-count" class="float-end text-muted"></span>
+                        </div>
+                        {% if form.content.errors %}
+                            <div class="text-danger small">{{ form.content.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Draft checkbox -->
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            {{ form.is_draft }}
+                            <label class="form-check-label fw-bold" for="{{ form.is_draft.id_for_label }}">
+                                <i class="fas fa-save me-2"></i>{{ form.is_draft.label }}
+                            </label>
+                            {% if form.is_draft.help_text %}
+                                <div class="form-text">{{ form.is_draft.help_text }}</div>
+                            {% endif %}
+                        </div>
+                        {% if form.is_draft.errors %}
+                            <div class="text-danger small">{{ form.is_draft.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Submit buttons -->
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{% url 'blog:doctor_posts' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg px-4">
+                            <i class="fas fa-{% if is_edit %}save{% else %}plus{% endif %} me-2"></i>
+                            {% if is_edit %}Update Post{% else %}Create Post{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tips card -->
+        <div class="card mt-3">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Writing Tips</h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Choose a clear, descriptive title that explains the main topic</li>
+                    <li>Write a compelling summary that encourages patients to read more</li>
+                    <li>Use simple, easy-to-understand language</li>
+                    <li>Include practical tips and actionable advice</li>
+                    <li>Save as draft to review later before publishing</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Character counter for summary
+    const summaryField = document.querySelector('#id_summary');
+    const summaryCounter = document.querySelector('#summary-count');
+
+    if (summaryField && summaryCounter) {
+        function updateSummaryCount() {
+            const count = summaryField.value.length;
+            summaryCounter.textContent = count + '/500 characters';
+            if (count > 500) {
+                summaryCounter.classList.add('text-danger');
+            } else {
+                summaryCounter.classList.remove('text-danger');
+            }
+        }
+
+        summaryField.addEventListener('input', updateSummaryCount);
+        updateSummaryCount(); // Initial count
+    }
+
+    // Character counter for content
+    const contentField = document.querySelector('#id_content');
+    const contentCounter = document.querySelector('#content-count');
+
+    if (contentField && contentCounter) {
+        function updateContentCount() {
+            const count = contentField.value.length;
+            contentCounter.textContent = count + ' characters';
+        }
+
+        contentField.addEventListener('input', updateContentCount);
+        updateContentCount(); // Initial count
+    }
+
+    // Image preview
+    const imageInput = document.querySelector('#id_image');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Remove existing preview
+                    const existingPreview = document.querySelector('#image-preview');
+                    if (existingPreview) {
+                        existingPreview.remove();
+                    }
+
+                    // Create new preview
+                    const preview = document.createElement('div');
+                    preview.id = 'image-preview';
+                    preview.className = 'mt-2';
+                    preview.innerHTML = `
+                        <small class="text-muted">Preview:</small><br>
+                        <img src="${e.target.result}" alt="Preview" class="img-thumbnail" style="max-width: 200px;">
+                    `;
+                    imageInput.parentNode.appendChild(preview);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

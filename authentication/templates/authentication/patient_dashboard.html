@@ -16,9 +16,10 @@
     </div>
 </div>
 
-<div class="row justify-content-center">
+<div class="row">
+    <!-- Profile Information -->
     <div class="col-lg-8">
-        <div class="card shadow-lg">
+        <div class="card shadow">
             <div class="card-header bg-success text-white">
                 <h4 class="mb-0"><i class="fas fa-id-card me-2"></i>Your Profile Information</h4>
             </div>
@@ -30,11 +31,11 @@
                             {% if profile.profile_picture %}
                                 <img src="{{ profile.profile_picture.url }}" 
                                      alt="Profile Picture" 
-                                     class="img-fluid rounded-circle shadow" 
-                                     style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                                     class="img-fluid rounded-circle" 
+                                     style="max-width: 200px; max-height: 200px; object-fit: cover; border: 3px solid #198754;">
                             {% else %}
-                                <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center shadow" 
-                                     style="width: 200px; height: 200px;">
+                                <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                     style="width: 200px; height: 200px; border: 3px solid #198754;">
                                     <i class="fas fa-user-injured text-success" style="font-size: 4rem;"></i>
                                 </div>
                             {% endif %}
@@ -119,28 +120,48 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Quick Actions -->
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <i class="fas fa-calendar-check text-success mb-3" style="font-size: 2rem;"></i>
-                        <h5 class="card-title">Book Appointment</h5>
-                        <p class="card-text">Schedule your next medical appointment</p>
-                        <button class="btn btn-success" disabled>Coming Soon</button>
-                    </div>
+    <!-- Quick Actions -->
+    <div class="col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'blog:patient_blog_list' %}" class="btn btn-primary">
+                        <i class="fas fa-blog me-2"></i>Browse Health Blog
+                    </a>
+                    <button class="btn btn-success" disabled>
+                        <i class="fas fa-calendar-check me-2"></i>Book Appointment
+                        <small class="d-block">Coming Soon</small>
+                    </button>
+                    <button class="btn btn-warning" disabled>
+                        <i class="fas fa-file-medical-alt me-2"></i>Medical Records
+                        <small class="d-block">Coming Soon</small>
+                    </button>
+                    <button class="btn btn-danger" disabled>
+                        <i class="fas fa-pills me-2"></i>Prescriptions
+                        <small class="d-block">Coming Soon</small>
+                    </button>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <i class="fas fa-file-medical-alt text-info mb-3" style="font-size: 2rem;"></i>
-                        <h5 class="card-title">Medical Records</h5>
-                        <p class="card-text">View your medical history and reports</p>
-                        <button class="btn btn-info" disabled>Coming Soon</button>
-                    </div>
-                </div>
+        </div>
+
+        <!-- Health Tips -->
+        <div class="card shadow mt-3">
+            <div class="card-header bg-warning text-dark">
+                <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Daily Health Tip</h6>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    <i class="fas fa-quote-left text-muted"></i>
+                    Stay hydrated by drinking at least 8 glasses of water daily. 
+                    Proper hydration supports all bodily functions.
+                    <i class="fas fa-quote-right text-muted"></i>
+                </p>
+                <small class="text-muted">Read more health tips in our blog section!</small>
             </div>
         </div>
     </div>

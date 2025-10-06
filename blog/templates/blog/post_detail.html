@@ -1,0 +1,183 @@
+{% extends 'authentication/base.html' %}
+
+{% block title %}{{ post.title }} - Healthcare Portal{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'blog:patient_blog_list' %}">
+                        <i class="fas fa-blog me-1"></i>Blog
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'blog:category_posts' post.category.slug %}">{{ post.category.name }}</a>
+                </li>
+                <li class="breadcrumb-item active">{{ post.title|truncatechars:30 }}</li>
+            </ol>
+        </nav>
+
+        <!-- Post Content -->
+        <article class="card shadow">
+            <!-- Post Header -->
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="badge bg-light text-dark mb-2">{{ post.category.name }}</span>
+                        {% if post.is_draft %}
+                            <span class="badge bg-warning ms-2">Draft</span>
+                        {% endif %}
+                        <h1 class="h3 mb-2">{{ post.title }}</h1>
+                        <div class="d-flex align-items-center text-white-50">
+                            <i class="fas fa-user-md me-2"></i>
+                            <span class="me-3">Dr. {{ post.author.user.get_full_name }}</span>
+                            <i class="fas fa-calendar me-2"></i>
+                            <span>
+                                {% if post.is_draft %}
+                                    Created {{ post.created_at|date:"F d, Y" }}
+                                {% else %}
+                                    Published {{ post.published_at|date:"F d, Y" }}
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Author Actions -->
+                    {% if is_author %}
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" 
+                                    data-bs-toggle="dropdown">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'blog:edit_post' post.slug %}">
+                                        <i class="fas fa-edit me-2"></i>Edit Post
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{% url 'blog:delete_post' post.slug %}">
+                                        <i class="fas fa-trash me-2"></i>Delete Post
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Featured Image -->
+            {% if post.image %}
+                <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" 
+                     style="max-height: 400px; object-fit: cover;">
+            {% endif %}
+
+            <!-- Post Body -->
+            <div class="card-body">
+                <!-- Summary -->
+                <div class="alert alert-info" role="alert">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-info-circle me-2"></i>Summary
+                    </h6>
+                    <p class="mb-0">{{ post.summary }}</p>
+                </div>
+
+                <!-- Content -->
+                <div class="post-content">
+                    {{ post.content|linebreaks }}
+                </div>
+
+                <!-- Post Footer -->
+                <hr class="my-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">About the Author</h6>
+                        <div class="d-flex align-items-center">
+                            {% if post.author.profile_picture %}
+                                <img src="{{ post.author.profile_picture.url }}" 
+                                     alt="Dr. {{ post.author.user.get_full_name }}"
+                                     class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 60px; height: 60px;">
+                                    <i class="fas fa-user-md text-primary"></i>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <strong>Dr. {{ post.author.user.get_full_name }}</strong>
+                                <br>
+                                <small class="text-muted">
+                                    {{ post.author.city }}, {{ post.author.state }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h6 class="text-muted">Share This Article</h6>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary btn-sm" disabled>
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-sm" disabled>
+                                <i class="fab fa-twitter"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-success btn-sm" disabled>
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                        </div>
+                        <br>
+                        <small class="text-muted">Social sharing coming soon!</small>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Related Posts -->
+        {% if related_posts %}
+    <div class="mt-5">
+        <h4 class="text-primary mb-4">
+            <i class="fas fa-bookmark me-2"></i>Related Articles in {{ post.category.name }}
+        </h4>
+        <div class="row">
+            {% for related_post in related_posts %}
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        {% if related_post.image %}
+                            <img src="{{ related_post.image.url }}" class="card-img-top" alt="{{ related_post.title }}" style="height: 150px;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                <i class="fas fa-image fa-2x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-title">{{ related_post.title }}</h6>
+                            <p class="card-text small text-muted">{{ related_post.get_summary_truncated }}</p>
+                            <a href="{% url 'blog:post_detail' related_post.slug %}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-arrow-right"></i> Read More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+
+        <!-- Navigation -->
+        <div class="mt-4 text-center">
+            {% if user.userprofile.user_type == 'doctor' %}
+                <a href="{% url 'blog:doctor_posts' %}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-arrow-left me-2"></i>Back to My Posts
+                </a>
+            {% endif %}
+            <a href="{% url 'blog:patient_blog_list' %}" class="btn btn-primary">
+                <i class="fas fa-list me-2"></i>Browse All Posts
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

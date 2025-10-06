@@ -1,0 +1,118 @@
+{% extends 'authentication/base.html' %}
+
+{% block title %}{{ category.name }} Posts - Healthcare Portal{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Category Header -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h2 class="text-primary">
+                    {% if category.name == 'Mental Health' %}
+                        <i class="fas fa-brain me-2"></i>
+                    {% elif category.name == 'Heart Disease' %}
+                        <i class="fas fa-heartbeat me-2"></i>
+                    {% elif category.name == 'COVID-19' %}
+                        <i class="fas fa-virus me-2"></i>
+                    {% elif category.name == 'Immunization' %}
+                        <i class="fas fa-syringe me-2"></i>
+                    {% else %}
+                        <i class="fas fa-tag me-2"></i>
+                    {% endif %}
+                    {{ category.name }}
+                </h2>
+                {% if category.description %}
+                    <p class="text-muted">{{ category.description }}</p>
+                {% endif %}
+                <p class="text-muted mb-0">{{ total_posts }} article{{ total_posts|pluralize }} found</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'blog:patient_blog_list' %}">
+                            <i class="fas fa-blog me-1"></i>Blog
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">{{ category.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Posts Grid -->
+{% if posts %}
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <!-- Post Image -->
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" 
+                             style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                             style="height: 200px;">
+                            {% if category.name == 'Mental Health' %}
+                                <i class="fas fa-brain fa-3x text-muted"></i>
+                            {% elif category.name == 'Heart Disease' %}
+                                <i class="fas fa-heartbeat fa-3x text-muted"></i>
+                            {% elif category.name == 'COVID-19' %}
+                                <i class="fas fa-virus fa-3x text-muted"></i>
+                            {% elif category.name == 'Immunization' %}
+                                <i class="fas fa-syringe fa-3x text-muted"></i>
+                            {% else %}
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Post Content -->
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text text-muted">{{ post.get_summary_truncated }}</p>
+
+                        <!-- Post Meta -->
+                        <div class="mt-auto">
+                            <small class="text-muted mb-2 d-block">
+                                <i class="fas fa-user-md me-1"></i>Dr. {{ post.author.user.get_full_name }}
+                            </small>
+                            <small class="text-muted mb-3 d-block">
+                                <i class="fas fa-calendar me-1"></i>{{ post.published_at|date:"M d, Y" }}
+                            </small>
+                            <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-primary btn-sm w-100">
+                                <i class="fas fa-book-open me-2"></i>Read Full Article
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <!-- No Posts Found -->
+    <div class="text-center py-5">
+        {% if category.name == 'Mental Health' %}
+            <i class="fas fa-brain fa-4x text-muted mb-3"></i>
+        {% elif category.name == 'Heart Disease' %}
+            <i class="fas fa-heartbeat fa-4x text-muted mb-3"></i>
+        {% elif category.name == 'COVID-19' %}
+            <i class="fas fa-virus fa-4x text-muted mb-3"></i>
+        {% elif category.name == 'Immunization' %}
+            <i class="fas fa-syringe fa-4x text-muted mb-3"></i>
+        {% else %}
+            <i class="fas fa-search fa-4x text-muted mb-3"></i>
+        {% endif %}
+        <h4 class="text-muted">No {{ category.name }} posts yet</h4>
+        <p class="text-muted">Check back soon for new articles in this category!</p>
+        <a href="{% url 'blog:patient_blog_list' %}" class="btn btn-primary">
+            <i class="fas fa-arrow-left me-2"></i>Browse All Categories
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
